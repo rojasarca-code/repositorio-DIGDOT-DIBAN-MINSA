@@ -76,6 +76,42 @@ function inicializarHojas() {
   obtenerHoja(HOJA_BANCOS, ENC_BANCOS);
 }
 
+/**
+ * Crea (o rehace) la pestaña "Tablero": una tabla limpia, solo con fórmulas, pensada para
+ * conectar Looker Studio u otro tablero. Se actualiza sola cuando cambian las pestañas
+ * Bancos y Regiones. Se ejecuta una vez desde el editor.
+ */
+function crearHojaTablero() {
+  obtenerHoja(HOJA_BANCOS, ENC_BANCOS);
+  var libro = abrirLibro();
+  var hoja = libro.getSheetByName("Tablero");
+  if (!hoja) hoja = libro.insertSheet("Tablero");
+  hoja.clear();
+  var B = "Bancos!";
+  var vacio = function (col) { return 'ARRAYFORMULA(IF(' + B + 'A2:A="","",' + col + '))'; };
+  var columnas = [
+    ["Región", vacio(B + "B2:B")],
+    ["Banco de sangre", vacio(B + "C2:C")],
+    ["Responsable DIBAN", vacio(B + "D2:D")],
+    ["Jefe del banco", vacio(B + "E2:E")],
+    ["Teléfono", vacio(B + "F2:F")],
+    ["Correo", vacio(B + "G2:G")],
+    ["Estado de monitoreo", vacio(B + "H2:H")],
+    ["Contacto del jefe", vacio('IF((' + B + 'E2:E<>"")*(' + B + 'F2:F<>"")*(' + B + 'G2:G<>""),"Completo","Faltan datos")')],
+    ["Con observaciones", vacio('IF(LEN(' + B + 'I2:I)>0,"Sí","No")')],
+    ["Observaciones", vacio(B + "I2:I")],
+    ["Última actualización", vacio('IF(' + B + 'J2:J="","",DATEVALUE(LEFT(' + B + 'J2:J,10)))')],
+    ["Bancos", vacio("1")]
+  ];
+  columnas.forEach(function (c, i) {
+    hoja.getRange(1, i + 1).setValue(c[0]).setFontWeight("bold");
+    hoja.getRange(2, i + 1).setFormula("=" + c[1]);
+  });
+  hoja.getRange(2, 11, hoja.getMaxRows() - 1, 1).setNumberFormat("yyyy-mm-dd");
+  hoja.setFrozenRows(1);
+  hoja.autoResizeColumns(1, columnas.length);
+}
+
 // ---------------------------------------------------------------- lectura
 
 function leerTodo() {
