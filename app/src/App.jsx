@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMonitoreo } from './hooks/useMonitoreo.js';
+import { useSync } from './hooks/useSync.js';
 import { REGIONES } from './data/monitoreoData.js';
 import MonitoreoSidebar from './components/MonitoreoSidebar.jsx';
 import MonitoreoResumen from './components/MonitoreoResumen.jsx';
@@ -7,6 +8,7 @@ import MonitoreoRegion from './components/MonitoreoRegion.jsx';
 
 export default function App() {
   const monitoreo = useMonitoreo();
+  const sync = useSync(monitoreo.mon, monitoreo.setMon);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -28,6 +30,7 @@ export default function App() {
       {sidebarOpen && <div className="bs2-overlay" onClick={() => setSidebarOpen(false)} />}
 
       <MonitoreoSidebar
+        sync={sync}
         view={monitoreo.view}
         activeRegion={monitoreo.activeRegion}
         filtro={monitoreo.filtro}
@@ -47,6 +50,7 @@ export default function App() {
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           {monitoreo.view === 'resumen' && (
             <MonitoreoResumen
+              sync={sync}
               mon={monitoreo.mon}
               totals={monitoreo.totals}
               bancosPorRegion={monitoreo.bancosPorRegion}

@@ -16,7 +16,7 @@ export function useMonitoreo() {
   const bancosPorRegion = useMemo(() => {
     const map = {};
     REGIONES.forEach(r => { map[r.key] = []; });
-    mon.bancos.forEach(b => { (map[b.region] || (map[b.region] = [])).push(b); });
+    mon.bancos.filter(b => !b.eliminado).forEach(b => { (map[b.region] || (map[b.region] = [])).push(b); });
     return map;
   }, [mon.bancos]);
 
@@ -96,12 +96,13 @@ export function useMonitoreo() {
 
   const removeBanco = useCallback((id) => {
     if (!window.confirm('¿Quitar este banco de sangre de la lista?')) return;
-    setMon(prev => ({ ...prev, bancos: prev.bancos.filter(b => b.id !== id) }));
+    setMon(prev => ({ ...prev, bancos: prev.bancos.map(b => (b.id === id ? { ...b, eliminado: true } : b)) }));
   }, []);
 
   const resetMonitoreo = useCallback(() => {
     if (!window.confirm('¿Restablecer la lista a los datos de origen? Se perderán los contactos, estados y observaciones que hayas registrado.')) return;
     setMon(initialMonitoreo());
+    window.dispatchEvent(new Event('bs2:restablecer'));
     setFiltro('');
     setView('resumen');
   }, []);
@@ -122,13 +123,14 @@ export function useMonitoreo() {
   }, [mon]);
 
   const totals = useMemo(() => {
-    const asignados = mon.bancos.filter(b => b.asignado).length;
-    const monitoreados = mon.bancos.filter(b => b.estado === 'MONITOREADO').length;
-    return { regiones: REGIONES.length, bancos: mon.bancos.length, asignados, monitoreados };
+    const activos = mon.bancos.filter(b => !b.eliminado);
+    const asignados = activos.filter(b => b.asignado).length;
+    const monitoreados = activos.filter(b => b.estado === 'MONITOREADO').length;
+    return { regiones: REGIONES.length, bancos: activos.length, asignados, monitoreados };
   }, [mon.bancos]);
 
   return {
-    mon, view, activeRegion, filtro, setFiltro, bancosPorRegion, visibleRegions, totals,
+    mon, setMon, view, activeRegion, filtro, setFiltro, bancosPorRegion, visibleRegions, totals,
     regionStatsOf, setRegionField, setAlterno, addAlterno, removeAlterno,
     setBancoField, addObservacion, setObservacion, removeObservacion, addBanco, removeBanco, resetMonitoreo, goResumen, goRegion, goRelativeRegion, exportExcel
   };

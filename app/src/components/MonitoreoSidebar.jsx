@@ -1,10 +1,11 @@
 import logo from '../assets/minsa-logo.png';
 import { EQUIPOS, EQUIPO_DIBAN } from '../data/equipoDiban.js';
 import { iniciales, responsablesDe } from '../lib/monitoreo.js';
+import { textoEstadoSync } from '../lib/sync.js';
 import { navButtonStyle, actaButtonStyle, inputStyle } from '../lib/styles.js';
 
 export default function MonitoreoSidebar({
-  view, activeRegion, filtro, setFiltro, visibleRegions, bancosPorRegion, regionStatsOf, totals,
+  sync, view, activeRegion, filtro, setFiltro, visibleRegions, bancosPorRegion, regionStatsOf, totals,
   goResumen, goRegion, exportExcel, open, onClose
 }) {
   const withClose = (fn) => (...args) => { fn(...args); if (onClose) onClose(); };
@@ -82,7 +83,9 @@ export default function MonitoreoSidebar({
           <div style={{ height: '100%', width: pctMonitoreados + '%', background: '#000', borderRadius: 6 }} />
         </div>
         <button onClick={handleExport} style={actaButtonStyle}>⬇ Exportar lista a Excel</button>
-        <div style={{ fontSize: 10.5, color: '#8f8f8d' }}>Guardado automáticamente en este navegador</div>
+        <div style={{ fontSize: 10.5, color: '#8f8f8d' }}>
+          {sync.activo ? '☁ ' + textoEstadoSync(sync) : 'Guardado automáticamente en este navegador'}
+        </div>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ para organizar el monitoreo de los bancos de sangre tipo II en el contexto del F
 
 - Muestra el equipo técnico de la DIBAN, agrupado por equipos, con los bancos de sangre y regiones asignados a cada integrante.
 - Por región registra el coordinador regional de PRONAHEBAS y sus alternos (nombre, teléfono, correo) y, por banco de sangre, el jefe (nombre, teléfono, correo), el estado del monitoreo y observaciones.
-- Exporta la lista a Excel e imprime. Los datos registrados se guardan en el navegador.
+- Exporta la lista a Excel e imprime. Los datos registrados se guardan en el navegador y, si se configura, se comparten entre todos los dispositivos mediante una hoja de Google Sheets (ver [docs/CONFIGURAR-GOOGLE-SHEETS.md](docs/CONFIGURAR-GOOGLE-SHEETS.md)).
 
 ## Datos y asignaciones
 

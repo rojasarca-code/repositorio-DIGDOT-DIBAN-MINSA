@@ -2,6 +2,7 @@ import { REGIONES } from '../data/monitoreoData.js';
 import { EQUIPOS, EQUIPO_DIBAN } from '../data/equipoDiban.js';
 import { actaButtonStyleInline, secNavButtonStyle } from '../lib/styles.js';
 import { cardStyle, rowStyle, mutedText, Chip } from './MonCampos.jsx';
+import SyncPanel from './SyncPanel.jsx';
 
 const sectionTitle = { fontSize: 15, fontWeight: 800, margin: '30px 0 4px' };
 const regionChip = {
@@ -26,12 +27,12 @@ function regionesDe(bancos) {
   return REGIONES.filter(r => cuenta[r.key]).map(r => ({ region: r.key, n: cuenta[r.key] }));
 }
 
-export default function MonitoreoResumen({ mon, totals, bancosPorRegion, regionStatsOf, goRegion, resetMonitoreo, exportExcel }) {
+export default function MonitoreoResumen({ sync, mon, totals, bancosPorRegion, regionStatsOf, goRegion, resetMonitoreo, exportExcel }) {
   let done = 0, total = 0;
   REGIONES.forEach(r => { const s = regionStatsOf(r.key); done += s.done; total += s.total; });
   const pctContactos = total ? Math.round((done / total) * 100) : 0;
 
-  const bancosDe = (id) => mon.bancos.filter(b => b.asignado === id);
+  const bancosDe = (id) => mon.bancos.filter(b => !b.eliminado && b.asignado === id);
 
   return (
     <div>
@@ -48,6 +49,8 @@ export default function MonitoreoResumen({ mon, totals, bancosPorRegion, regionS
         <Tile label="Bancos monitoreados" value={totals.monitoreados + '/' + totals.bancos} />
         <Tile label="Contactos registrados" value={pctContactos + '%'} sub="coordinadores y jefes" />
       </div>
+
+      <SyncPanel sync={sync} />
 
       <div id="bs2-topbar-actions" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <button onClick={exportExcel} style={actaButtonStyleInline}>⬇ Exportar a Excel</button>

@@ -37,7 +37,8 @@ function textoObservaciones(banco) {
 export function exportMonitoreoExcel({ mon }) {
   const miembro = id => EQUIPO_DIBAN.find(m => m.id === id);
   const nombreDe = id => (miembro(id) ? miembro(id).nombre : '');
-  const bancosDe = key => mon.bancos.filter(b => b.region === key);
+  const activos = mon.bancos.filter(b => !b.eliminado);
+  const bancosDe = key => activos.filter(b => b.region === key);
 
   // --- Hoja 1: regiones, responsables, coordinadores y alternos ---
   const altHeaders = [];
@@ -62,7 +63,7 @@ export function exportMonitoreoExcel({ mon }) {
     'Jefe del banco de sangre', 'Teléfono', 'Correo', 'Estado de monitoreo', 'Observaciones', 'Nota (fuente)'];
   const regOrder = {};
   REGIONES.forEach((r, i) => { regOrder[r.key] = i; });
-  const rBancos = mon.bancos.slice()
+  const rBancos = activos.slice()
     .sort((a, b) => ((regOrder[a.region] || 0) - (regOrder[b.region] || 0)) || a.ipress.localeCompare(b.ipress))
     .map(b => [b.region, nombreDe(b.asignado), b.renipress, b.ipress, b.categoria, b.subsector,
       b.provincia, b.distrito, b.jefe, b.tel, b.correo, b.estado, textoObservaciones(b), b.nota]);
@@ -70,7 +71,7 @@ export function exportMonitoreoExcel({ mon }) {
   // --- Hoja 3: equipo DIBAN y su carga ---
   const hEquipo = ['Integrante DIBAN', 'Equipo', 'Rol', 'Profesión', 'Celular', 'N° bancos', 'Regiones asignadas', 'Bancos asignados'];
   const rEquipo = EQUIPO_DIBAN.map(m => {
-    const suyos = mon.bancos.filter(b => b.asignado === m.id);
+    const suyos = activos.filter(b => b.asignado === m.id);
     const regs = [];
     suyos.forEach(b => { if (regs.indexOf(b.region) < 0) regs.push(b.region); });
     return [m.nombre, m.equipo, m.coordinador ? 'Coordinador' : 'Integrante', m.profesion, m.celular, suyos.length,
