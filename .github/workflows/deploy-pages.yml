@@ -37,6 +37,8 @@ jobs:
 
       - name: Build
         working-directory: app
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
         run: npm run build
 
       - name: Upload artifact
