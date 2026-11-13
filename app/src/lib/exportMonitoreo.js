@@ -1,6 +1,6 @@
 import { REGIONES } from '../data/monitoreoData.js';
 import { EQUIPO_DIBAN } from '../data/equipoDiban.js';
-import { MAX_ALTERNOS } from './monitoreo.js';
+import { MAX_ALTERNOS, fmtFecha } from './monitoreo.js';
 import { pad } from './format.js';
 
 function escXml(v) {
@@ -24,6 +24,14 @@ function sheet(name, title, headers, dataRows) {
   rows += row(headers.map(h => [h, 'bold']));
   dataRows.forEach(r => { rows += row(r); });
   return '<Worksheet ss:Name="' + escXml(name.slice(0, 31)) + '"><Table>' + widths + rows + '</Table></Worksheet>';
+}
+
+// Todas las observaciones de un banco en una celda: "DD/MM/AAAA: texto | ...".
+function textoObservaciones(banco) {
+  return (banco.observaciones || [])
+    .filter(o => o.texto && o.texto.trim())
+    .map(o => (fmtFecha(o.fecha) ? fmtFecha(o.fecha) + ': ' : '') + o.texto.trim())
+    .join(' | ');
 }
 
 export function exportMonitoreoExcel({ mon }) {
@@ -57,7 +65,7 @@ export function exportMonitoreoExcel({ mon }) {
   const rBancos = mon.bancos.slice()
     .sort((a, b) => ((regOrder[a.region] || 0) - (regOrder[b.region] || 0)) || a.ipress.localeCompare(b.ipress))
     .map(b => [b.region, nombreDe(b.asignado), b.renipress, b.ipress, b.categoria, b.subsector,
-      b.provincia, b.distrito, b.jefe, b.tel, b.correo, b.estado, b.obs, b.nota]);
+      b.provincia, b.distrito, b.jefe, b.tel, b.correo, b.estado, textoObservaciones(b), b.nota]);
 
   // --- Hoja 3: equipo DIBAN y su carga ---
   const hEquipo = ['Integrante DIBAN', 'Equipo', 'Rol', 'Profesión', 'Celular', 'N° bancos', 'Regiones asignadas', 'Bancos asignados'];

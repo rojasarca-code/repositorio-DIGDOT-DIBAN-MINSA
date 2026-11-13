@@ -5,16 +5,16 @@ import { cardStyle, rowStyle, mutedText, Chip } from './MonCampos.jsx';
 
 const sectionTitle = { fontSize: 15, fontWeight: 800, margin: '30px 0 4px' };
 const regionChip = {
-  cursor: 'pointer', background: '#fff', border: '1px solid oklch(78% 0 0)', borderRadius: 20, padding: '3px 10px',
+  cursor: 'pointer', background: '#fff', border: '1px solid #b7b7b7', borderRadius: 20, padding: '3px 10px',
   fontSize: 11.5, fontWeight: 600, fontFamily: 'Manrope,sans-serif'
 };
 
 function Tile({ label, value, sub }) {
   return (
     <div style={{ ...cardStyle, padding: '14px 16px' }}>
-      <div style={{ fontSize: 11.5, fontWeight: 700, color: 'oklch(50% 0.01 30)' }}>{label}</div>
+      <div style={{ fontSize: 11.5, fontWeight: 700, color: '#636363' }}>{label}</div>
       <div style={{ fontSize: 26, fontWeight: 800, lineHeight: 1.2 }}>{value}</div>
-      {sub && <div style={{ fontSize: 11.5, color: 'oklch(55% 0.01 30)' }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 11.5, color: '#717171' }}>{sub}</div>}
     </div>
   );
 }
@@ -36,7 +36,7 @@ export default function MonitoreoResumen({ mon, totals, bancosPorRegion, regionS
   return (
     <div>
       <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Monitoreo · Bancos de Sangre Tipo II</div>
-      <div style={{ fontSize: 14, color: 'oklch(50% 0.01 30)', marginBottom: 22 }}>
+      <div style={{ fontSize: 14, color: '#636363', marginBottom: 22 }}>
         Lista de monitoreo en el contexto del Fenómeno El Niño. Cada integrante del equipo técnico de la DIBAN tiene bancos
         asignados; en cada región se registra el coordinador regional de PRONAHEBAS y sus alternos, y el jefe de cada banco
         de sangre tipo II (con teléfonos y correos). Las asignaciones las define la DIBAN y no se editan en esta pantalla.

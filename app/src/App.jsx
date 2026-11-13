@@ -19,7 +19,7 @@ export default function App() {
   const mobileTitle = monitoreo.view === 'region' ? regionActiva.key : 'Monitoreo El Niño · Bancos Tipo II';
 
   return (
-    <div id="bs2-root" style={{ display: 'flex', height: '100vh', width: '100%', background: 'oklch(98% 0.004 90)', fontFamily: "'Manrope',sans-serif", color: 'oklch(22% 0.01 30)' }}>
+    <div id="bs2-root" style={{ display: 'flex', height: '100vh', width: '100%', background: '#f9f9f7', fontFamily: "'Manrope',sans-serif", color: '#1b1b1b' }}>
       <div id="bs2-mobile-topbar">
         <button onClick={() => setSidebarOpen(true)} aria-label="Abrir menú">☰</button>
         <div className="bs2-mobile-title">{mobileTitle}</div>
@@ -70,6 +70,9 @@ export default function App() {
               addAlterno={monitoreo.addAlterno}
               removeAlterno={monitoreo.removeAlterno}
               setBancoField={monitoreo.setBancoField}
+              addObservacion={monitoreo.addObservacion}
+              setObservacion={monitoreo.setObservacion}
+              removeObservacion={monitoreo.removeObservacion}
               addBanco={monitoreo.addBanco}
               removeBanco={monitoreo.removeBanco}
               goPrev={() => monitoreo.goRelativeRegion(-1)}

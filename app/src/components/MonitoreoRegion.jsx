@@ -3,14 +3,15 @@ import { inputStyle, secNavButtonStyle, actaButtonStyleInline } from '../lib/sty
 import { cardStyle, mutedText, Campo, Entrada, Chip } from './MonCampos.jsx';
 const blockTitle = { fontSize: 15, fontWeight: 800 };
 const dangerButton = {
-  border: '1px solid oklch(75% 0 0)', background: '#fff', color: '#000', borderRadius: 8,
+  border: '1px solid #aeaeae', background: '#fff', color: '#000', borderRadius: 8,
   padding: '6px 12px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'Manrope,sans-serif'
 };
 
 const vacio = v => !(v && String(v).trim());
 
-function BancoCard({ banco, setBancoField, removeBanco }) {
+function BancoCard({ banco, setBancoField, addObservacion, setObservacion, removeObservacion, removeBanco }) {
   const set = (field) => (value) => setBancoField(banco.id, field, value);
+  const observaciones = banco.observaciones || [];
   const faltan = vacio(banco.jefe) || vacio(banco.tel) || vacio(banco.correo);
   const responsable = miembroPorId(banco.asignado);
   const meta = [
@@ -61,13 +62,45 @@ function BancoCard({ banco, setBancoField, removeBanco }) {
         <Entrada label="Correo electrónico" value={banco.correo} onChange={set('correo')} placeholder="correo@ejemplo.com" mode="email" />
       </div>
 
-      <div className="mon-grid-2" style={{ marginTop: 14, gridTemplateColumns: '220px 1fr' }}>
+      <div className="mon-estado" style={{ marginTop: 14 }}>
         <Campo label="Estado del monitoreo">
           <select value={banco.estado} onChange={e => setBancoField(banco.id, 'estado', e.target.value)} style={inputStyle}>
             {ESTADOS_MONITOREO.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
         </Campo>
-        <Entrada label="Observaciones" value={banco.obs} onChange={set('obs')} placeholder="Acuerdos, hallazgos, disponibilidad de hemocomponentes…" />
+      </div>
+
+      <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', margin: '16px 0 8px' }}>
+        Observaciones{observaciones.length > 0 ? ' (' + observaciones.length + ')' : ''}
+      </div>
+      {observaciones.length === 0 && (
+        <div style={{ ...mutedText, marginBottom: 8 }}>Aún no hay observaciones para este banco.</div>
+      )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {observaciones.map((o, i) => (
+          <div key={i} className="mon-obs">
+            <div className="mon-obs-fecha">
+              <Campo label={'Observación ' + (i + 1) + ' · fecha'}>
+                <input type="date" value={o.fecha || ''} onChange={e => setObservacion(banco.id, i, 'fecha', e.target.value)} style={inputStyle} />
+              </Campo>
+            </div>
+            <div className="mon-obs-texto">
+              <Campo label="Detalle">
+                <textarea
+                  rows={2}
+                  value={o.texto || ''}
+                  onChange={e => setObservacion(banco.id, i, 'texto', e.target.value)}
+                  placeholder="Acuerdos, hallazgos, disponibilidad de hemocomponentes…"
+                  style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.4 }}
+                />
+              </Campo>
+            </div>
+            <button className="mon-noprint mon-obs-quitar" onClick={() => removeObservacion(banco.id, i)} aria-label={'Quitar observación ' + (i + 1)} style={dangerButton}>Quitar</button>
+          </div>
+        ))}
+      </div>
+      <div className="mon-noprint" style={{ marginTop: 10 }}>
+        <button onClick={() => addObservacion(banco.id)} style={secNavButtonStyle}>+ Agregar observación</button>
       </div>
 
       {banco.custom && (
@@ -81,7 +114,7 @@ function BancoCard({ banco, setBancoField, removeBanco }) {
 
 export default function MonitoreoRegion({
   region, state, bancos, stats, filtro, setFiltro, setRegionField, setAlterno, addAlterno, removeAlterno,
-  setBancoField, addBanco, removeBanco, goPrev, goNext
+  setBancoField, addObservacion, setObservacion, removeObservacion, addBanco, removeBanco, goPrev, goNext
 }) {
   const set = (field) => (value) => setRegionField(region.key, field, value);
   const responsables = responsablesDe(bancos);
@@ -93,10 +126,10 @@ export default function MonitoreoRegion({
   return (
     <div>
       <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 2 }}>{region.key}</div>
-      <div style={{ fontSize: 13.5, color: 'oklch(50% 0.01 30)', marginBottom: 4 }}>
+      <div style={{ fontSize: 13.5, color: '#636363', marginBottom: 4 }}>
         {region.entidad}{lugar ? ' · ' + lugar : ''}
       </div>
-      <div style={{ fontSize: 13.5, color: 'oklch(50% 0.01 30)', marginBottom: 20 }}>
+      <div style={{ fontSize: 13.5, color: '#636363', marginBottom: 20 }}>
         {stats.bancos} {stats.bancos === 1 ? 'banco de sangre tipo II' : 'bancos de sangre tipo II'} · {stats.monitoreados} monitoreados · {stats.pct}% de contactos registrados
       </div>
 
@@ -127,7 +160,7 @@ export default function MonitoreoRegion({
         <div style={{ ...blockTitle, marginTop: 22 }}>Coordinadores alternos</div>
         <div style={{ ...mutedText, marginTop: 2 }}>Hasta {MAX_ALTERNOS} alternos del coordinador regional.</div>
         {state.alternos.map((a, i) => (
-          <div key={i} style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid oklch(92% 0.006 90)' }}>
+          <div key={i} style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #e4e4e2' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <div style={{ fontSize: 12, fontWeight: 800 }}>Alterno {i + 1}</div>
               <button className="mon-noprint" onClick={() => removeAlterno(region.key, i)} style={dangerButton}>Quitar</button>
@@ -155,12 +188,20 @@ export default function MonitoreoRegion({
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         {bancos.length === 0 && (
-          <div style={{ fontSize: 13.5, color: 'oklch(55% 0.01 30)', fontStyle: 'italic' }}>
+          <div style={{ fontSize: 13.5, color: '#717171', fontStyle: 'italic' }}>
             No hay bancos de sangre tipo II registrados en la base de datos para esta región. Puedes agregar uno manualmente.
           </div>
         )}
         {bancosVisibles.map(b => (
-          <BancoCard key={b.id} banco={b} setBancoField={setBancoField} removeBanco={removeBanco} />
+          <BancoCard
+            key={b.id}
+            banco={b}
+            setBancoField={setBancoField}
+            addObservacion={addObservacion}
+            setObservacion={setObservacion}
+            removeObservacion={removeObservacion}
+            removeBanco={removeBanco}
+          />
         ))}
       </div>
       <div className="mon-noprint" style={{ marginTop: 14 }}>

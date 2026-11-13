@@ -59,12 +59,12 @@ body {
     flex-shrink: 0;
     padding: 12px 16px;
     background: #ffffff;
-    border-bottom: 1px solid oklch(90% 0.006 90);
+    border-bottom: 1px solid #dedddb;
   }
 
   #bs2-mobile-topbar button {
     background: none;
-    border: 1px solid oklch(88% 0.006 90);
+    border: 1px solid #d7d7d5;
     border-radius: 8px;
     font-size: 20px;
     line-height: 1;
@@ -250,5 +250,56 @@ body {
 @media print {
   .mon-noprint {
     display: none !important;
+  }
+}
+
+/* ---------- Observaciones de cada banco ---------- */
+
+.mon-estado {
+  max-width: 260px;
+}
+
+.mon-obs {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid #e4e4e2;
+  border-radius: 10px;
+  background: #fafaf8;
+}
+
+/* ---------- Compatibilidad con celulares y tablets ---------- */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+button, select {
+  touch-action: manipulation;
+}
+
+@media (max-width: 900px) {
+  .mon-obs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mon-obs-quitar {
+    justify-self: start;
+  }
+
+  .mon-estado {
+    max-width: none;
+  }
+
+  /* 16px evita el zoom automático al enfocar un campo en iPhone/iPad. */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  #bs2-main button, #bs2-sidebar button {
+    min-height: 40px;
   }
 }

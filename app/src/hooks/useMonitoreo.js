@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { REGIONES } from '../data/monitoreoData.js';
 import {
-  MAX_ALTERNOS, emptyContacto, initialMonitoreo, loadMonitoreo, saveMonitoreo, regionStats
+  MAX_ALTERNOS, emptyContacto, emptyObservacion, initialMonitoreo, loadMonitoreo, saveMonitoreo, regionStats
 } from '../lib/monitoreo.js';
 import { exportMonitoreoExcel as exportMonitoreoExcelFile } from '../lib/exportMonitoreo.js';
 
@@ -63,6 +63,25 @@ export function useMonitoreo() {
     setMon(prev => ({ ...prev, bancos: prev.bancos.map(b => (b.id === id ? { ...b, [field]: value } : b)) }));
   }, []);
 
+  const patchBancoObs = useCallback((id, fn) => {
+    setMon(prev => ({
+      ...prev,
+      bancos: prev.bancos.map(b => (b.id === id ? { ...b, observaciones: fn(b.observaciones || []) } : b))
+    }));
+  }, []);
+
+  const addObservacion = useCallback((id) => {
+    patchBancoObs(id, obs => [...obs, emptyObservacion()]);
+  }, [patchBancoObs]);
+
+  const setObservacion = useCallback((id, idx, field, value) => {
+    patchBancoObs(id, obs => obs.map((o, i) => (i === idx ? { ...o, [field]: value } : o)));
+  }, [patchBancoObs]);
+
+  const removeObservacion = useCallback((id, idx) => {
+    patchBancoObs(id, obs => obs.filter((_, i) => i !== idx));
+  }, [patchBancoObs]);
+
   const addBanco = useCallback((regionKey) => {
     const meta = REGIONES.find(r => r.key === regionKey);
     setMon(prev => ({
@@ -70,7 +89,7 @@ export function useMonitoreo() {
       bancos: [...prev.bancos, {
         id: 'c' + Date.now(), renipress: '', region: regionKey, dirsa: meta ? meta.entidad : '', ipress: '',
         categoria: '', subsector: '', provincia: '', distrito: '', jefe: '', tel: '', correo: '', nota: '',
-        asignado: '', estado: 'PENDIENTE', obs: '', custom: true
+        asignado: '', estado: 'PENDIENTE', observaciones: [], custom: true
       }]
     }));
   }, []);
@@ -111,6 +130,6 @@ export function useMonitoreo() {
   return {
     mon, view, activeRegion, filtro, setFiltro, bancosPorRegion, visibleRegions, totals,
     regionStatsOf, setRegionField, setAlterno, addAlterno, removeAlterno,
-    setBancoField, addBanco, removeBanco, resetMonitoreo, goResumen, goRegion, goRelativeRegion, exportExcel
+    setBancoField, addObservacion, setObservacion, removeObservacion, addBanco, removeBanco, resetMonitoreo, goResumen, goRegion, goRelativeRegion, exportExcel
   };
 }

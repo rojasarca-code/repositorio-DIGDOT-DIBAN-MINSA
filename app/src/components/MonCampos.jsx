@@ -1,15 +1,15 @@
 import { labelStyle, inputStyle } from '../lib/styles.js';
 
 export const cardStyle = {
-  background: '#fff', border: '1px solid oklch(90% 0.006 90)', borderRadius: 14, padding: '20px 24px'
+  background: '#fff', border: '1px solid #dedddb', borderRadius: 14, padding: '20px 24px'
 };
 
 export const rowStyle = {
-  background: '#fff', border: '1px solid oklch(90% 0.006 90)', borderRadius: 12, padding: '12px 16px',
+  background: '#fff', border: '1px solid #dedddb', borderRadius: 12, padding: '12px 16px',
   display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14
 };
 
-export const mutedText = { fontSize: 12.5, color: 'oklch(50% 0.01 30)' };
+export const mutedText = { fontSize: 12.5, color: '#636363' };
 
 export function Campo({ label, children }) {
   return (
