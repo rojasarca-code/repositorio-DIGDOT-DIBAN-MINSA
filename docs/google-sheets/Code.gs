@@ -15,6 +15,11 @@
 // sola vez en la aplicación; sin ella el servicio no entrega ni recibe datos.
 var CLAVE_EQUIPO = 'CAMBIAR-ESTA-CLAVE';
 
+// Solo si el programa se creó suelto en script.google.com (no desde Extensiones > Apps Script
+// de la hoja): pega aquí el ID de la hoja de cálculo, la parte larga de su dirección
+// entre /d/ y /edit. Si el programa está dentro de la hoja, déjalo vacío.
+var ID_HOJA = '';
+
 var HOJA_BANCOS = 'Bancos';
 var HOJA_REGIONES = 'Regiones';
 
@@ -55,6 +60,14 @@ function onEdit(e) {
     if (hoja.getName() === HOJA_BANCOS && ultima >= 5 && col <= 8) marcar(hoja, fila, 10, 11);
     if (hoja.getName() === HOJA_REGIONES && ultima >= 2 && col <= 4) marcar(hoja, fila, 6, 7);
   } catch (err) { /* sin acción */ }
+}
+
+/** Solo para programas sueltos (con ID_HOJA): hace que las correcciones a mano en la hoja se detecten. Se ejecuta una vez. */
+function instalarDisparador() {
+  if (!ID_HOJA) return;
+  var libro = SpreadsheetApp.openById(ID_HOJA);
+  var hay = ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === 'onEdit'; });
+  if (!hay) ScriptApp.newTrigger('onEdit').forSpreadsheet(libro).onEdit().create();
 }
 
 /** Opcional: crea las hojas con sus encabezados (también se crean solas al primer uso). */
@@ -149,7 +162,7 @@ function guardarCambios(req) {
 // --------------------------------------------------------------- utilidades
 
 function obtenerHoja(nombre, encabezados) {
-  var libro = SpreadsheetApp.getActiveSpreadsheet();
+  var libro = abrirLibro();
   var hoja = libro.getSheetByName(nombre);
   if (hoja) return hoja;
   hoja = libro.insertSheet(nombre);
@@ -158,6 +171,10 @@ function obtenerHoja(nombre, encabezados) {
   // Formato de texto: conserva teléfonos y códigos tal como se escriben.
   hoja.getRange(1, 1, hoja.getMaxRows(), encabezados.length).setNumberFormat('@');
   return hoja;
+}
+
+function abrirLibro() {
+  return ID_HOJA ? SpreadsheetApp.openById(ID_HOJA) : SpreadsheetApp.getActiveSpreadsheet();
 }
 
 function leerFilas(hoja, nColumnas) {
