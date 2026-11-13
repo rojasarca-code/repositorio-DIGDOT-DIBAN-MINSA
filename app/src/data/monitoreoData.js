@@ -1,27 +1,7 @@
 // Datos de origen para el módulo de Monitoreo – Fenómeno El Niño (Bancos de Sangre Tipo II).
-// Fuentes: DIRECTORIO DIBAN.xlsx, CONTACTO DE COORDINADORES REGIONALES.xlsx y
+// Fuentes: CONTACTO DE COORDINADORES REGIONALES.xlsx y
 // BASE DE DATOS REGISTRO NACIONAL BANCOS DE SANGRE AUTORIZADOS OFICIAL (05.11.2026).xlsx
 
-export const EQUIPO_DIBAN = [
-  { id: "d1", nombre: "ALEX NADER CELADA PADILLA", condicion: "NOMBRADO", area: "COORDINADOR DEL ÁREA DE GESTIÓN Y NORMATIVA", celular: "999 455 569" },
-  { id: "d2", nombre: "JACKIER GENDRAU ACHO", condicion: "TERCERO", area: "Equipo del área de gestión y normativa", celular: "942 012 708" },
-  { id: "d3", nombre: "LIZ ESTHER QUISPICONDOR ARTEAGA", condicion: "NOMBRADO", area: "COORDINADORA DEL ÁREA DE CALIDAD", celular: "986 808 550" },
-  { id: "d4", nombre: "ROBERTO ROJAS ARCA", condicion: "TERCERO", area: "Equipo del área de calidad", celular: "987 126 220" },
-  { id: "d5", nombre: "ANGELA QUISPE ARAGÓN", condicion: "TERCERO", area: "Equipo del área de calidad", celular: "987 128 555" },
-  { id: "d6", nombre: "JOSE BUSTAMANTE GUEVARA", condicion: "NOMBRADO", area: "COORDINADOR DEL ÁREA DE AUTORIZACIÓN", celular: "995 095 899" },
-  { id: "d7", nombre: "MACETAS APARCANA ROSARIO", condicion: "TERCERO", area: "Equipo del área de autorización", celular: "987 103 630" },
-  { id: "d8", nombre: "LOURDES RUFASTO SOTO", condicion: "TERCERO", area: "Equipo del área de autorización", celular: "986 318 944" },
-  { id: "d9", nombre: "KAREN TORRES LOPEZ", condicion: "NOMBRADA", area: "Equipo del área de autorización", celular: "921 275 280" },
-  { id: "d10", nombre: "IRVIN ADRIAN BARBEYTO TORIBIO", condicion: "NOMBRADO", area: "COORDINADOR DEL ÁREA DE PROMOCIÓN Y SUPERVISIÓN", celular: "997 752 910" },
-  { id: "d11", nombre: "ELIZABETH CONGONA PEÑA", condicion: "TERCERO", area: "Equipo del área de promoción", celular: "987 057 977" },
-  { id: "d12", nombre: "MARIA DEL CARMEN CERON", condicion: "TERCERO", area: "Equipo del área de promoción", celular: "937 471 980" },
-  { id: "d13", nombre: "LILIANA ESTEFANIA NICHO MACHADO", condicion: "NOMBRADA", area: "Equipo del área de supervisión", celular: "940 120 225" },
-  { id: "d14", nombre: "KATHERINE MAYDANA AGUILAR", condicion: "TERCERO", area: "Equipo del área de supervisión", celular: "941 468 410" },
-  { id: "d15", nombre: "YENNIFER HUARCAYA DAMIANO", condicion: "CAS", area: "Equipo del área de supervisión", celular: "957 274 511" },
-  { id: "d16", nombre: "PAMELA CABRERO TORIBIO", condicion: "TERCERO", area: "Equipo del área de supervisión", celular: "950 361 674" },
-  { id: "d17", nombre: "LILIA VILCHEZ ENRIQUEZ", condicion: "TERCERO", area: "Equipo del área de supervisión", celular: "991 394 276" },
-  { id: "d18", nombre: "ERNESTO ROJAS CACÉRES", condicion: "TERCERO", area: "Equipo del área de supervisión", celular: "922 559 158" },
-];
 
 export const REGIONES = [
   { key: "AMAZONAS", entidad: "DIRESA", direccion: "Jr. Sosiego N°355", distrito: "CHACHAPOYAS", provincia: "CHACHAPOYAS", coordNombre: "Milagros Consuelo Tafur Ynga", coordTel: "979853735", coordCorreo: "miligrostafur17@gmail.com" },

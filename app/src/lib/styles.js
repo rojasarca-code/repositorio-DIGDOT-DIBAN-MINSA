@@ -38,30 +38,3 @@ export function navButtonStyle(active, disabled) {
     display: 'block'
   };
 }
-
-export function answerButtonStyle(kind, active) {
-  if (!active) {
-    return {
-      background: '#fff', border: '1px solid oklch(85% 0.006 90)', color: 'oklch(40% 0.01 30)',
-      borderRadius: 8, padding: '7px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-      fontFamily: 'Manrope,sans-serif', minWidth: 52
-    };
-  }
-  return {
-    background: '#000', border: '1px solid #000', color: '#fff',
-    borderRadius: 8, padding: '7px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-    fontFamily: 'Manrope,sans-serif', minWidth: 52
-  };
-}
-
-export function nivelBadgeStyle(nivel) {
-  const map = {
-    'CRÍTICO': { bg: '#000', text: '#fff' }, 'ALTO': { bg: '#444', text: '#fff' },
-    'MEDIO': { bg: '#fff', text: '#000', border: true }, 'BAJO': { bg: '#fff', text: '#000', border: true }
-  };
-  const c = map[nivel] || { bg: '#eee', text: '#000' };
-  return {
-    fontSize: 11, fontWeight: 700, background: c.bg, color: c.text, borderRadius: 6, padding: '3px 9px',
-    ...(c.border ? { border: '1.5px solid #000' } : {})
-  };
-}

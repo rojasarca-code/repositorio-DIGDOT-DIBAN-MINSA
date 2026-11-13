@@ -1,16 +1,28 @@
-# React + Vite
+# Monitoreo de Bancos de Sangre Tipo II · Fenómeno El Niño
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Aplicación web de la Dirección de Banco de Sangre y Hemoterapia (DIBAN – DIGDOT – MINSA)
+para organizar el monitoreo de los bancos de sangre tipo II en el contexto del Fenómeno El Niño.
 
-Currently, two official plugins are available:
+- Muestra el equipo técnico de la DIBAN, agrupado por equipos, con los bancos de sangre y regiones asignados a cada integrante.
+- Por región registra el coordinador regional de PRONAHEBAS y sus alternos (nombre, teléfono, correo) y, por banco de sangre, el jefe (nombre, teléfono, correo), el estado del monitoreo y observaciones.
+- Exporta la lista a Excel e imprime. Los datos registrados se guardan en el navegador.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Datos y asignaciones
 
-## React Compiler
+Todo está en `app/src/data/`:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Archivo | Contenido |
+|---|---|
+| `monitoreoData.js` | Regiones con su coordinador regional y los 86 bancos tipo II (registro nacional del 05.11.2026). |
+| `equipoDiban.js` | Integrantes de la DIBAN: equipo, rol de coordinador y profesión. |
+| `asignaciones.js` | Asignación de bancos a cada integrante (por región y, en Lima, por banco). **Es la única fuente de las asignaciones**: se cambia en este archivo, no desde la pantalla. |
 
-## Expanding the Oxlint configuration
+## Desarrollo
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+cd app
+npm ci
+npm run dev
+```
+
+El despliegue a GitHub Pages es automático al subir cambios de `app/` a `main` (`.github/workflows/deploy-pages.yml`).

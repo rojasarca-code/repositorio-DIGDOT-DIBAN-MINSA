@@ -1,8 +1,6 @@
-import { EQUIPO_DIBAN } from '../data/monitoreoData.js';
-import { ESTADOS_MONITOREO, MAX_ALTERNOS } from '../lib/monitoreo.js';
+import { ESTADOS_MONITOREO, MAX_ALTERNOS, miembroPorId, responsablesDe } from '../lib/monitoreo.js';
 import { inputStyle, secNavButtonStyle, actaButtonStyleInline } from '../lib/styles.js';
 import { cardStyle, mutedText, Campo, Entrada, Chip } from './MonCampos.jsx';
-
 const blockTitle = { fontSize: 15, fontWeight: 800 };
 const dangerButton = {
   border: '1px solid oklch(75% 0 0)', background: '#fff', color: '#000', borderRadius: 8,
@@ -14,6 +12,7 @@ const vacio = v => !(v && String(v).trim());
 function BancoCard({ banco, setBancoField, removeBanco }) {
   const set = (field) => (value) => setBancoField(banco.id, field, value);
   const faltan = vacio(banco.jefe) || vacio(banco.tel) || vacio(banco.correo);
+  const responsable = miembroPorId(banco.asignado);
   const meta = [
     banco.renipress && 'RENIPRESS ' + banco.renipress,
     banco.categoria,
@@ -31,6 +30,9 @@ function BancoCard({ banco, setBancoField, removeBanco }) {
             <div style={{ fontSize: 14.5, fontWeight: 800, lineHeight: 1.3 }}>{banco.ipress}</div>
           )}
           {!banco.custom && <div style={mutedText}>{meta}</div>}
+          <div style={{ ...mutedText, marginTop: 4 }}>
+            <b style={{ color: '#000' }}>Responsable DIBAN:</b> {responsable ? responsable.nombre + ' · Cel. ' + responsable.celular : 'sin asignar'}
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
           {faltan && <Chip>Faltan datos</Chip>}
@@ -78,12 +80,13 @@ function BancoCard({ banco, setBancoField, removeBanco }) {
 }
 
 export default function MonitoreoRegion({
-  region, state, team, bancos, stats, setRegionField, assignRegion, setAlterno, addAlterno, removeAlterno,
+  region, state, bancos, stats, filtro, setFiltro, setRegionField, setAlterno, addAlterno, removeAlterno,
   setBancoField, addBanco, removeBanco, goPrev, goNext
 }) {
   const set = (field) => (value) => setRegionField(region.key, field, value);
-  const miembros = EQUIPO_DIBAN.filter(m => (team[m.id] && team[m.id].participa) || m.id === state.asignado);
-  const asignado = EQUIPO_DIBAN.find(m => m.id === state.asignado);
+  const responsables = responsablesDe(bancos);
+  const filtrado = filtro ? miembroPorId(filtro) : null;
+  const bancosVisibles = filtrado ? bancos.filter(b => b.asignado === filtro) : bancos;
   const coordFalta = vacio(state.coordNombre) || vacio(state.coordTel) || vacio(state.coordCorreo);
   const lugar = [region.direccion, [region.distrito, region.provincia].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(' / ')].filter(Boolean).join(' · ');
 
@@ -98,15 +101,15 @@ export default function MonitoreoRegion({
       </div>
 
       <div className="mon-card" style={cardStyle}>
-        <div style={blockTitle}>Supervisor DIBAN asignado</div>
-        <div className="mon-grid-2" style={{ marginTop: 10, gridTemplateColumns: '1fr 1fr', alignItems: 'end' }}>
-          <Campo label="Responsable del monitoreo en esta región">
-            <select value={state.asignado} onChange={e => assignRegion(region.key, e.target.value)} style={inputStyle}>
-              <option value="">— Sin asignar —</option>
-              {miembros.map(m => <option key={m.id} value={m.id}>{m.nombre}</option>)}
-            </select>
-          </Campo>
-          <div style={mutedText}>{asignado ? asignado.area + ' · Cel. ' + asignado.celular : 'Elige a un integrante del equipo DIBAN.'}</div>
+        <div style={blockTitle}>{responsables.length > 1 ? 'Supervisores DIBAN asignados' : 'Supervisor DIBAN asignado'}</div>
+        {responsables.length === 0 && <div style={{ ...mutedText, marginTop: 6 }}>Esta región no tiene bancos asignados.</div>}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+          {responsables.map(m => (
+            <div key={m.id} style={{ fontSize: 13.5 }}>
+              <b>{m.nombre}</b>
+              <span style={mutedText}> · {m.equipo} · Cel. {m.celular} · {bancos.filter(b => b.asignado === m.id).length} de {bancos.length} bancos</span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -143,14 +146,20 @@ export default function MonitoreoRegion({
         )}
       </div>
 
-      <div style={{ ...blockTitle, margin: '28px 0 10px' }}>Bancos de sangre tipo II de la región ({bancos.length})</div>
+      <div style={{ ...blockTitle, margin: '28px 0 10px' }}>Bancos de sangre tipo II de la región ({bancosVisibles.length}{filtrado ? ' de ' + bancos.length : ''})</div>
+      {filtrado && (
+        <div className="mon-noprint" style={{ ...mutedText, marginBottom: 10 }}>
+          Mostrando solo los bancos de {filtrado.nombre}.{' '}
+          <button onClick={() => setFiltro('')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'Manrope,sans-serif', fontSize: 12.5, fontWeight: 700, textDecoration: 'underline' }}>Ver todos los bancos</button>
+        </div>
+      )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         {bancos.length === 0 && (
           <div style={{ fontSize: 13.5, color: 'oklch(55% 0.01 30)', fontStyle: 'italic' }}>
             No hay bancos de sangre tipo II registrados en la base de datos para esta región. Puedes agregar uno manualmente.
           </div>
         )}
-        {bancos.map(b => (
+        {bancosVisibles.map(b => (
           <BancoCard key={b.id} banco={b} setBancoField={setBancoField} removeBanco={removeBanco} />
         ))}
       </div>
