@@ -20,6 +20,10 @@ escribe únicamente quien configura, en la página de Google; no se comparte ni 
    frase de 3 o 4 palabras). Es la que usará el equipo para conectarse.
 4. Pulsa **Guardar** (icono del disquete).
 
+> **Si creaste el programa suelto en <script.google.com> (y no desde la hoja):** en `Code.gs` pega en
+> `ID_HOJA` el ID de la hoja de cálculo (la parte larga de su dirección entre `/d/` y `/edit`).
+> Si lo creaste desde la hoja con *Extensiones > Apps Script*, deja `ID_HOJA` vacío.
+
 ## 3. Crear las hojas internas y dar permiso
 
 1. En el selector de funciones (arriba) elige `inicializarHojas` y pulsa **Ejecutar**.
